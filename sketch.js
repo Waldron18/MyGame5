@@ -1,10 +1,11 @@
 var soldier, alienBoss, alienArmy, alienGroup;
 var alienHealth, healthBar;
-var life , bullets, bulletsGroup;
+var life, bullets, bulletsGroup, alienBullets, alienBulletsGroup;
 var invisibleGround, bgsprite;
 var score = 0;
 var gameState;
-var PLAY, END, LEVEL1;
+var PLAY, END, LEVEL1, WIN;
+var confetti = [];
 
 function preload() {
   lifeImg = loadImage("images/life.png");
@@ -24,10 +25,11 @@ function setup() {
   PLAY = 1;
   END = 0;
   LEVEL1 = 2;
+  WIN = 3;
 
   gameState = PLAY;
 
-  life = 3;
+  life = 5;
   alienHealth = 100;
 
   bgsprite = createSprite(width / 2, height / 2, 100, 100)
@@ -45,14 +47,22 @@ function setup() {
 
   alienGroup = new Group();
   bulletsGroup = new Group();
+  alienBulletsGroup = new Group();
 
   invisibleGround = createSprite(500, 490, 1000, 20);
   invisibleGround.visible = false;
+
 
 }
 
 function draw() {
   background("black");
+
+  drawSprites();
+
+  displayLives();
+
+  displayScore();
 
   if (gameState == PLAY) {
     play();
@@ -62,9 +72,23 @@ function draw() {
     level1();
   }
 
-  drawSprites();
+  if (life === 0) {
+    gameState = END;
+  }
 
-  displayLives();
+  if (gameState === END) {
+    end();
+  }
 
-  displayScore();
+  if (alienHealth === 0) {
+    for (var i = 0; i < 100; i++) {
+      confetti.push(createSprite(random(0, width), random(0, height), 5, 5))
+    }
+    gameState = WIN;
+  }
+
+  if (gameState === WIN) {
+    win();
+  }
+
 }
