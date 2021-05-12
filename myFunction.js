@@ -1,8 +1,8 @@
 function displayLives() {
     //shows the lives
-    var x = soldier.x - 480;
+    var x = soldier.x - windowWidth/2 + 10;
     for (var i = 0; i < life; i++) {
-        image(lifeImg, x, 10, 50, 50);
+        image(lifeImg, x, 10, windowWidth/30, windowWidth/30);
         x = x + 50
     }
 
@@ -17,11 +17,11 @@ function displayScore() {
 
 function spawnArmy() {
     if (frameCount % 80 === 0) {
-        alienArmy = createSprite(soldier.x + 500, 410, 50, 30);
+        alienArmy = createSprite(soldier.x + 500, windowHeight - 100, 50, 30);
         alienArmy.addImage(alienArmyImg);
         alienArmy.velocityX = -3;
         alienArmy.collide(invisibleGround);
-        alienArmy.scale = 1.25;
+        alienArmy.scale = windowHeight / 700 + 0.25;
         alienArmy.setCollider("circle", 0, 0, 60);
 
         alienArmy.lifetime = 800;
@@ -52,32 +52,40 @@ function movement() {
     soldier.x = camera.position.x;
     invisibleGround.x = soldier.x
 
+
     //gravity
     soldier.velocityY = soldier.velocityY + 0.8;
     soldier.collide(invisibleGround);
 
-    if (keyWentDown(DOWN_ARROW)) {
+    if (keyWentDown("space")) {
         fill("red");
         bulletsShooting();
         soldier.changeImage("shoot", soldierShooting);
-    } else if (keyIsDown(RIGHT_ARROW)) {
-        soldier.changeAnimation("run", soldierRunning);
-        soldier.velocityX = 3;
-        bgsprite.velocityX = -3;
-    } else {
-        soldier.changeImage("standing", soldierStanding);
-        soldier.velocityX = 0;
-        bgsprite.velocityX = 0;
-    }
-    //jumping
-    if (keyDown(UP_ARROW)) {
-        soldier.velocityY = -5;
-        soldier.changeAnimation("jump", soldierJumping);
     }
 
+    //jumping
+    if (touches.length !== 0 || keyDown(UP_ARROW)) {
+        soldier.velocityY = -5;
+        soldier.changeAnimation("jump", soldierJumping);
+        touches = [];
+    }
+
+    if (soldier.x % 2000 === 0) {
+        bgsprite.x = soldier.x;
+    }
 }
 
 function play() {
+
+    shootButton.position(windowWidth-80, windowHeight-80);
+    shootButton.mousePressed(() => {
+        fill("red");
+        bulletsShooting();
+        soldier.changeImage("shoot", soldierShooting);
+    });
+
+    bgsprite.velocityX = -3;
+    soldier.changeAnimation("run", soldierRunning);
 
     movement();
     spawnArmy();
@@ -95,10 +103,10 @@ function play() {
     }
 
     if (score == 100) {
-        alienBoss = createSprite(soldier.x + 500, 440, 50, 80);
+        alienBoss = createSprite(soldier.x + 500, windowHeight - 100, 50, 80);
         alienBoss.addAnimation("alienrunning", alienBossRunning);
         alienBoss.velocityX = -3;
-        alienBoss.scale = 2;
+        alienBoss.scale = windowHeight / 350;
         alienBoss.collide(invisibleGround);
         gameState = LEVEL1;
     }
@@ -148,11 +156,11 @@ function win() {
     strokeWeight(5);
     stroke("green");
     text("YOU  WON!", width / 2 - 100, height / 2);
-    for(var i = 0; i < confetti.length; i++){
+    for (var i = 0; i < confetti.length; i++) {
         confetti[i].velocityY = 5;
-        confetti[i].shapeColor = color(random(0,255),random(0,255),random(0,255));
-        if(confetti[i].y > 500){
-            confetti[i].y = random(0,500);
+        confetti[i].shapeColor = color(random(0, 255), random(0, 255), random(0, 255));
+        if (confetti[i].y > 500) {
+            confetti[i].y = random(0, 500);
         }
     }
 }

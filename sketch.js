@@ -6,6 +6,7 @@ var score = 0;
 var gameState;
 var PLAY, END, LEVEL1, WIN;
 var confetti = [];
+var shootButton;
 
 function preload() {
   lifeImg = loadImage("images/life.png");
@@ -20,7 +21,7 @@ function preload() {
 }
 
 function setup() {
-  createCanvas(1000, 500);
+  createCanvas(windowWidth, windowHeight);
 
   PLAY = 1;
   END = 0;
@@ -34,11 +35,11 @@ function setup() {
 
   bgsprite = createSprite(width / 2, height / 2, 100, 100)
   bgsprite.addImage(bgImg);
-  bgsprite.scale = 6;
+  bgsprite.scale = windowHeight/100;
 
   soldier = createSprite(200, 440, 50, 80);
   soldier.addImage(soldierStanding);
-  soldier.scale = 0.5;
+  soldier.scale = windowHeight/1400;
   soldier.addAnimation("run", soldierRunning);
   soldier.addAnimation("jump", soldierJumping);
   soldier.addImage("standing", soldierStanding);
@@ -49,9 +50,10 @@ function setup() {
   bulletsGroup = new Group();
   alienBulletsGroup = new Group();
 
-  invisibleGround = createSprite(500, 490, 1000, 20);
+  invisibleGround = createSprite(500, height - 10, 1000, 50);
   invisibleGround.visible = false;
 
+  shootButton = createButton("SHOOT")
 
 }
 
@@ -81,7 +83,7 @@ function draw() {
   }
 
   if (alienHealth === 0) {
-    for (var i = 0; i < 100; i++) {
+    for (var i = 0; i < 50; i++) {
       confetti.push(createSprite(random(0, width), random(0, height), 5, 5))
     }
     gameState = WIN;
